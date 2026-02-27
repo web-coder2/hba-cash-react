@@ -1,0 +1,42 @@
+.container {
+    padding: 20px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+input[type="date"] {
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+}
+  
+input[type="date"]:focus {
+    border-color: #00ffcc;
+    box-shadow: 0 0 5px #00ffcc;
+}
+  
+
+button {
+    background-color: #444;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+  
+button:hover {
+    background-color: #555;
+}
+  
+button:active {
+    background-color: #222;
+}
