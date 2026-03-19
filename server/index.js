@@ -49,18 +49,24 @@ app.get('/api/hold/get', async (req, res) => {
         onlyHoldsArray.forEach((lead) => {
         
             let formattedDate = dayjs(lead.startedAt).format('YYYY-MM-DD')
+
+            let sumSalary = lead?.price?.offer || 0
+
+            let salary = (sumSalary / 50 * 65) + (sumSalary * 0.2)
         
             if (!aggregatedObject[formattedDate]) {
                 aggregatedObject[formattedDate] = {
                     date: formattedDate,
                     countHold: 1,
                     sumHold: lead?.price?.offer || 0,
-                    brokerSalary: lead?.price?.offer * 0.6 * 0.15
+                    // brokerSalary: lead?.price?.offer * 0.6 * 0.15
+                    brokerSalary: salary
                 }
             } else {
                 aggregatedObject[formattedDate].countHold++,
                 aggregatedObject[formattedDate].sumHold += lead?.price?.offer || 0,
-                aggregatedObject[formattedDate].brokerSalary += lead?.price?.offer * 0.6 * 0.15
+                // aggregatedObject[formattedDate].brokerSalary += lead?.price?.offer * 0.6 * 0.15
+                aggregatedObject[formattedDate].brokerSalary += salary
             }
         })
 
