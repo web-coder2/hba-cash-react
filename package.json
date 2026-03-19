@@ -1,0 +1,30 @@
+{
+  "name": "hba-cash-react",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "concurrently \"npm run server\"",
+    "build": "cd client && npm run build",
+    "client": "cd client && npm install && npm run dev",
+    "server": "cd server && npm install && npm run dev"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web-coder2/hba-cash-react.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/web-coder2/hba-cash-react/issues"
+  },
+  "homepage": "https://github.com/web-coder2/hba-cash-react#readme",
+  "description": "",
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

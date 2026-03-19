@@ -11,8 +11,6 @@ function FormFIlter() {
     const [endDate, setEndDate] = useState(dayjs(new Date).format('YYYY-MM-DD'))
     const [tableData, setTableData] = useState([])
 
-    const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjZiNjU5YjBlZWE3YzQwODVmOTAxNTciLCJsb2dpbiI6Iml2YW4iLCJpYXQiOjE3MjI2ODc5MzcsImV4cCI6Mzc3MjI2ODQzMzd9.9_UL1lKPhouKkbN9_ZMsjOEcqB87v5OujNae40aZxIs'
-
     const handleStartDate = (e) => {
         setStartDate(dayjs(e.target.value).format('YYYY-MM-DD'))
         console.log(startDate)
@@ -25,45 +23,18 @@ function FormFIlter() {
 
     async function fetchData() {
 
-        const response = await axios.get("https://residence.hbnetwork.ru/api/leads", {
+        const response = await axios.get('http://localhost:5000/api/hold/get', {
             params: {
-                '_page': 1,
-                '_limit': 0,
-                'startedAt[]': ['gte:' + startDate, 'lte:' + endDate]
-            },
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': `Bearer ${apiToken}`
-            },
-        })
-
-        let responseData = response.data.data
-
-        responseData = responseData.filter((lead) => {
-            return lead.status === 'hold'
-        })
-
-        const aggragatedDataObject = {}
-
-        responseData.forEach((lead) => {
-
-            let formattedDate = dayjs(lead.startedAt).format('YYYY-MM-DD')
-
-            if (!aggragatedDataObject[formattedDate]) {
-                aggragatedDataObject[formattedDate] = {
-                    date: formattedDate,
-                    countHold: 1,
-                    sumHold: lead?.price?.offer || 0,
-                    brokerSalary: lead?.price?.offer * 0.6 * 0.15
-                }
-            } else {
-                aggragatedDataObject[formattedDate].countHold++,
-                aggragatedDataObject[formattedDate].sumHold += lead?.price?.offer || 0,
-                aggragatedDataObject[formattedDate].brokerSalary += lead?.price?.offer * 0.6 * 0.15
+                gte: startDate,
+                lte: endDate
             }
         })
 
-        setTableData(Object.values(aggragatedDataObject))
+        console.log(response)
+
+        const tableData = response.data.data
+
+        setTableData(Object.values(tableData))
 
     }
 
