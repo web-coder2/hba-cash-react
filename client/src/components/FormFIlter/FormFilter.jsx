@@ -3,6 +3,8 @@ import axios from 'axios'
 import dayjs from 'dayjs'
 import { useState } from 'react'
 
+import TableComponent from '../TableComponent/TableComponent/'
+
 function FormFIlter() {
 
     const [startDate, setStartDate] = useState(dayjs(new Date).format('YYYY-MM-DD'))
@@ -80,16 +82,7 @@ function FormFIlter() {
                 <p>Выбраное конец времени: { endDate }</p>
             </div>
 
-            <div>
-                {tableData.map((item, index) => (
-                    <div key={index}>
-                        <p>Дата: {item.date}</p>
-                        <p>Кол-во: {item.countHold}</p>
-                        <p>Сумма: {item.sumHold}</p>
-                        <p>Зарплата брокера: {item.brokerSalary}</p>
-                    </div>
-                ))}
-            </div>
+            <TableComponent tableData={ tableData } />
 
         </>
 
