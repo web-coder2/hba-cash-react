@@ -19,58 +19,59 @@ app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, '../client/dist')));
 
 
+async function getUsersStats(gte) {
+    try {
+        const response = await axios.get("https://residence.hbnetwork.ru/api/leads/salary", {
+            params: {
+                '_page': 1,
+                '_limit': 0,
+                'startedAt[]': ['gte:' + gte, 'lte:' + gte]
+            },
+            headers: {
+                'Authorization': `Bearer ${apiToken}`
+            }
+        })
+        return response.data.data.total.total
+    } catch (e) {
+        console.log(e)
+        return []
+    }
+}
+
 app.get('/api/hold/get', async (req, res) => {
 
     try {
 
         const { gte, lte } = req.query
-        const holdsStatuses = ['hold', 'confirmed', 'refused']
 
-        const response = await axios.get("https://residence.hbnetwork.ru/api/leads", {
-            params: {
-                '_page': 1,
-                '_limit': 0,
-                'startedAt[]': ['gte:' + gte, 'lte:' + lte]
-            },
-            headers: {
-                'Content-Type' : 'application/json',
-                'Authorization': `Bearer ${apiToken}`
-            },
-        })
+        let tableData = []
 
-        let dataToSend = response.data.data
-        
-        let onlyHoldsArray = dataToSend.filter((item) => {
-            return holdsStatuses.includes(item.status)
-        })
+        let startDate = dayjs(gte)
+        let endDate = dayjs(lte)
 
-        aggregatedObject = {}
+        for ( let current = startDate; current.format('YYYY-MM-DD') <= endDate.format('YYYY-MM-DD'); current = current.add(1, 'day')) {
 
-        onlyHoldsArray.forEach((lead) => {
-        
-            let formattedDate = dayjs(lead.startedAt).format('YYYY-MM-DD')
+            let formattedDate = dayjs(current).format('YYYY-MM-DD')
 
-            let sumSalary = lead?.price?.offer || 0
+            let usersSalaryObjectToDate = await getUsersStats(formattedDate)
 
-            let salary = (sumSalary / 50 * 65) + (sumSalary * 0.2)
-        
-            if (!aggregatedObject[formattedDate]) {
-                aggregatedObject[formattedDate] = {
-                    date: formattedDate,
-                    countHold: 1,
-                    sumHold: lead?.price?.offer || 0,
-                    // brokerSalary: lead?.price?.offer * 0.6 * 0.15
-                    brokerSalary: salary
-                }
-            } else {
-                aggregatedObject[formattedDate].countHold++,
-                aggregatedObject[formattedDate].sumHold += lead?.price?.offer || 0,
-                // aggregatedObject[formattedDate].brokerSalary += lead?.price?.offer * 0.6 * 0.15
-                aggregatedObject[formattedDate].brokerSalary += salary
-            }
-        })
+            console.log(usersSalaryObjectToDate)
 
-        const tableData = Object.values(aggregatedObject)
+            let sumSalary = usersSalaryObjectToDate.hold.sum
+            let sumBonuses = usersSalaryObjectToDate.bonuses
+            let sumPay = usersSalaryObjectToDate.minuses
+
+            tableData.push({
+                date: formattedDate,
+                countHold: usersSalaryObjectToDate.hold.count,
+                sumHold: usersSalaryObjectToDate.hold.sum * 2 * 10,
+                brokerSalary: (sumSalary / 50 * 65) + (sumSalary * 0.2) + sumBonuses + 4000 + sumPay
+            })
+            
+        }
+
+        console.log(tableData)
+
 
         res.status(200).json({
             data: tableData
