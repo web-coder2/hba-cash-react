@@ -11,7 +11,6 @@ const app = express()
 const apiToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjZiNjU5YjBlZWE3YzQwODVmOTAxNTciLCJsb2dpbiI6Iml2YW4iLCJpYXQiOjE3MjI2ODc5MzcsImV4cCI6Mzc3MjI2ODQzMzd9.9_UL1lKPhouKkbN9_ZMsjOEcqB87v5OujNae40aZxIs'
 
 
-
 app.use(cors({ origin: '*' }))
 app.use(express.json({ limit: '10mb' }))
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -38,6 +37,41 @@ async function getUsersStats(gte) {
     }
 }
 
+async function getSumHoldByOffers(date) {
+    try {
+        const response = await axios.get("https://residence.hbnetwork.ru/api/leads", {
+            params: {
+                '_page': 1,
+                '_limit': 0,
+                'startedAt[]': ['gte:' + date, 'lte:' + date]
+            },
+            headers: {
+                'Authorization': `Bearer ${apiToken}`
+            }
+        })
+        
+        let leadData = response.data.data
+        let allowedStatuses = ['hold', 'confirmed', 'refused']
+
+        let onlyHolds = leadData.filter((lead) => {
+            return allowedStatuses.includes(lead.status)
+        })
+
+        let fullSumPriceOffer = 0
+
+        onlyHolds.forEach((item) => {
+            fullSumPriceOffer += item.price.offer
+            // fullSumPriceOffer += item.price.offer  * 0.6 // возмождно потмо вот так сделать по логике определеной
+        })
+
+        return fullSumPriceOffer
+
+    } catch (e) {
+        console.log(e)
+    }
+       
+}
+
 app.get('/api/hold/get', async (req, res) => {
 
     try {
@@ -54,8 +88,9 @@ app.get('/api/hold/get', async (req, res) => {
             let formattedDate = dayjs(current).format('YYYY-MM-DD')
 
             let usersSalaryObjectToDate = await getUsersStats(formattedDate)
+            
+            let sumOffer = await getSumHoldByOffers(formattedDate)
 
-            console.log(usersSalaryObjectToDate)
 
             let sumSalary = usersSalaryObjectToDate.hold.sum
             let sumBonuses = usersSalaryObjectToDate.bonuses
@@ -66,15 +101,14 @@ app.get('/api/hold/get', async (req, res) => {
             tableData.push({
                 date: formattedDate,
                 countHold: usersSalaryObjectToDate.hold.count,
-                sumHold: usersSalaryObjectToDate.hold.sum * 2 * 10,
+                sumHold: usersSalaryObjectToDate.hold.sum * 2,
                 brokerSalary: brokerSalary,
                 bonuses: sumBonuses,
                 sumPay: sumPay,
+                sumOffer: sumOffer,
             })
             
         }
-
-        console.log(tableData)
 
 
         res.status(200).json({

@@ -14,6 +14,7 @@ function TableComponent({ tableData, visibleBonusColumn }) {
                         <th>ЗП брокеров</th>
                         { visibleBonusColumn ? <th>Бонусы</th> : null }
                         { visibleBonusColumn ? <th>Минусы</th> : null }
+                        { visibleBonusColumn ? <th>Сума оферов</th> : null }
                     </tr>
                 </thead>
                 <tbody>
@@ -25,6 +26,7 @@ function TableComponent({ tableData, visibleBonusColumn }) {
                             <td>{Math.round(item.brokerSalary)}</td>
                             { visibleBonusColumn ? <td>{Math.round(item.bonuses)}</td>  : null }
                             { visibleBonusColumn ? <td>{Math.round(item.sumPay)}</td>  : null }
+                            { visibleBonusColumn ? <td>{Math.round(item.sumOffer)}</td>  : null }
                         </tr>
                     ))}
                 </tbody>
