@@ -61,11 +61,15 @@ app.get('/api/hold/get', async (req, res) => {
             let sumBonuses = usersSalaryObjectToDate.bonuses
             let sumPay = usersSalaryObjectToDate.minuses
 
+            let brokerSalary = (sumSalary * 2 * 0.6) + sumBonuses + sumPay + 4000
+
             tableData.push({
                 date: formattedDate,
                 countHold: usersSalaryObjectToDate.hold.count,
                 sumHold: usersSalaryObjectToDate.hold.sum * 2 * 10,
-                brokerSalary: (sumSalary / 50 * 65) + (sumSalary * 0.2) + sumBonuses + 4000 + sumPay
+                brokerSalary: brokerSalary,
+                bonuses: sumBonuses,
+                sumPay: sumPay,
             })
             
         }

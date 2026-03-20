@@ -11,6 +11,8 @@ function FormFIlter() {
     const [endDate, setEndDate] = useState(dayjs(new Date).format('YYYY-MM-DD'))
     const [tableData, setTableData] = useState([])
 
+    const [visibleBonusColumn, setVisibleBonusColumn] = useState(false)
+
     const handleStartDate = (e) => {
         setStartDate(dayjs(e.target.value).format('YYYY-MM-DD'))
         console.log(startDate)
@@ -19,6 +21,10 @@ function FormFIlter() {
     const handleEndDate = (e) => {
         setEndDate(dayjs(e.target.value).format('YYYY-MM-DD'))
         console.log(endDate)
+    }
+
+    function changeVisibleColumn() {
+        setVisibleBonusColumn(!visibleBonusColumn)
     }
 
     async function fetchData() {
@@ -46,6 +52,7 @@ function FormFIlter() {
                 <input type="date" value={ startDate } onChange={ handleStartDate } />
                 <input type="date" value={ endDate } onChange={ handleEndDate }></input>
                 <button onClick={ fetchData }>Применить</button>
+                <button onClick={ changeVisibleColumn }>{visibleBonusColumn ? 'скрыть' : 'показать'} бонусы</button>
             </div>
 
             <div>
@@ -53,7 +60,7 @@ function FormFIlter() {
                 <p>Выбраное конец времени: { endDate }</p>
             </div>
 
-            <TableComponent tableData={ tableData } />
+            <TableComponent tableData = { tableData } visibleBonusColumn = { visibleBonusColumn } />
 
         </>
 

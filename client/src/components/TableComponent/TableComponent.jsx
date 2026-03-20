@@ -1,6 +1,6 @@
 import './TableComponent.css'
 
-function TableComponent({ tableData }) {
+function TableComponent({ tableData, visibleBonusColumn }) {
 
 
     return (
@@ -12,6 +12,8 @@ function TableComponent({ tableData }) {
                         <th>Кол-во холдов</th>
                         <th>Сума холдов</th>
                         <th>ЗП брокеров</th>
+                        { visibleBonusColumn ? <th>Бонусы</th> : null }
+                        { visibleBonusColumn ? <th>Минусы</th> : null }
                     </tr>
                 </thead>
                 <tbody>
@@ -21,6 +23,8 @@ function TableComponent({ tableData }) {
                             <td>{Math.round(item.countHold)}</td>
                             <td>{Math.round(item.sumHold)}</td>
                             <td>{Math.round(item.brokerSalary)}</td>
+                            { visibleBonusColumn ? <td>{Math.round(item.bonuses)}</td>  : null }
+                            { visibleBonusColumn ? <td>{Math.round(item.sumPay)}</td>  : null }
                         </tr>
                     ))}
                 </tbody>
