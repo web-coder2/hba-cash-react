@@ -29,7 +29,10 @@ function FormFIlter() {
 
     async function fetchData() {
 
-        const response = await axios.get('http://localhost:5000/api/hold/get', {
+        let localUrl = 'http://localhost:5000/api/hold/get'
+        let newUrl = 'http://31.130.151.240:8000/api/hold/get'
+
+        const response = await axios.get(newUrl, {
             params: {
                 gte: startDate,
                 lte: endDate
