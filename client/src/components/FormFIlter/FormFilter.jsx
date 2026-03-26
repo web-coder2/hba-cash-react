@@ -10,6 +10,7 @@ function FormFIlter() {
     const [startDate, setStartDate] = useState(dayjs(new Date).format('YYYY-MM-DD'))
     const [endDate, setEndDate] = useState(dayjs(new Date).format('YYYY-MM-DD'))
     const [tableData, setTableData] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
 
     const [visibleBonusColumn, setVisibleBonusColumn] = useState(false)
 
@@ -29,6 +30,8 @@ function FormFIlter() {
 
     async function fetchData() {
 
+        setIsLoading(true)
+
         let localUrl = 'http://localhost:5000/api/hold/get'
         let newUrl = 'http://31.130.151.240:8000/api/hold/get'
 
@@ -44,7 +47,7 @@ function FormFIlter() {
         const tableData = response.data.data
 
         setTableData(Object.values(tableData))
-
+        setIsLoading(false)
     }
 
     return (
@@ -63,7 +66,20 @@ function FormFIlter() {
                 <p>Выбраное конец времени: { endDate }</p>
             </div>
 
-            <TableComponent tableData = { tableData } visibleBonusColumn = { visibleBonusColumn } />
+            {
+
+                isLoading === false ? (
+                    <TableComponent tableData = { tableData } visibleBonusColumn = { visibleBonusColumn } />
+                ) : (
+                    // аимация загрузки
+                    <div>
+                        <div class="loader"></div>
+                    </div>
+                )
+
+            }
+
+
 
         </>
 
